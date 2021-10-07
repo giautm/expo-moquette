@@ -1,13 +1,13 @@
 import { NativeModules, Platform } from 'react-native';
 
 const LINKING_ERROR =
-  `The package 'expo-mqtt-broker' doesn't seem to be linked. Make sure: \n\n` +
+  `The package 'expo-moquette' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const ExpoMqttBroker = NativeModules.ExpoMqttBroker
-  ? NativeModules.ExpoMqttBroker
+const ExpoMoquette = NativeModules.ExpoMoquette
+  ? NativeModules.ExpoMoquette
   : new Proxy(
       {},
       {
@@ -17,6 +17,6 @@ const ExpoMqttBroker = NativeModules.ExpoMqttBroker
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return ExpoMqttBroker.multiply(a, b);
+export function startServerAsync(a: number, b: number): Promise<number> {
+  return ExpoMoquette.startServerAsync(a, b);
 }

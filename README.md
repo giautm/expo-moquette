@@ -11,11 +11,11 @@ npm install expo-mqtt-broker
 ## Usage
 
 ```js
-import { multiply } from "expo-mqtt-broker";
+import { startServerAsync } from "expo-mqtt-broker";
 
 // ...
 
-const result = await multiply(3, 7);
+const result = await startServerAsync(3, 7);
 ```
 
 ## Contributing

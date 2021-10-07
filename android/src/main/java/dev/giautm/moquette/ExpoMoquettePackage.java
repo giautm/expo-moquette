@@ -1,4 +1,4 @@
-package com.expomqttbroker;
+package dev.giautm.moquette;
 
 import androidx.annotation.NonNull;
 
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ExpoMqttBrokerPackage implements ReactPackage {
+public class ExpoMoquettePackage implements ReactPackage {
     @NonNull
     @Override
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
-        modules.add(new ExpoMqttBrokerModule(reactContext));
+        modules.add(new ExpoMoquetteModule(reactContext));
         return modules;
     }
 

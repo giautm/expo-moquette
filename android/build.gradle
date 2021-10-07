@@ -56,4 +56,7 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
+
+    // https://mvnrepository.com/artifact/io.moquette/moquette-broker
+    implementation 'io.moquette:moquette-broker:0.15'
 }

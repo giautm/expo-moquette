@@ -1,8 +1,8 @@
-@objc(ExpoMqttBroker)
-class ExpoMqttBroker: NSObject {
+@objc(ExpoMoquette)
+class ExpoMoquette: NSObject {
 
-    @objc(multiply:withB:withResolver:withRejecter:)
-    func multiply(a: Float, b: Float, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+    @objc(startServerAsync:withB:withResolver:withRejecter:)
+    func startServerAsync(a: Float, b: Float, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve(a*b)
     }
 }
