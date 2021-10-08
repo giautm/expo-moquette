@@ -1,4 +1,4 @@
-# expo-mqtt-broker
+# expo-moquette
 
 MQTT Broker for Expo application
 
