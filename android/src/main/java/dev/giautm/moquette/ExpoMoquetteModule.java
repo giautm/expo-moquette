@@ -89,7 +89,7 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
         result.putBoolean("OK", true);
         promise.resolve(result);
       } catch ( Exception e ){
-        promise.reject("ERR_MOQUETTE_STOP", e);
+        promise.reject("ERR_MOQUETTE", e);
       }
     }
 
@@ -105,12 +105,12 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
         promise.resolve(result);
 
       } catch (Exception e) {
-        promise.reject("ERR_MOQUETTE_RESTART", e);
+        promise.reject("ERR_MOQUETTE", e);
       }
     }
 
     @ReactMethod
-    public void getListConnectedClients(Promise promise) {
+    public void getConnectedClientsAsync(Promise promise) {
       try {
         Collection<ClientDescriptor> list = server.listConnectedClients();
         WritableArray result = Arguments.createArray();
@@ -125,7 +125,7 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
         }
         promise.resolve(result);
       } catch (Exception e) {
-        promise.reject("ERR_MOQUETTE_CLIENT_LIST", e);
+        promise.reject("ERR_MOQUETTE", e);
       }
     }
 
@@ -139,7 +139,7 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
         promise.resolve(result);
 
       } catch (Exception e){
-        promise.reject("ERR_MOQUETTE_SERVER_STATUS", e);
+        promise.reject("ERR_MOQUETTE", e);
       }
     }
 
@@ -190,7 +190,7 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getID() {
-      return "ViecCoPublisherListener";
+      return "JSPublisherListener";
     }
   }
 

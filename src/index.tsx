@@ -31,7 +31,7 @@ export function startServerAsync(config: ServerConfig): Promise<string> {
 }
 
 export function getConnectedList(): Promise<any> {
-  return ExpoMoquette.getListConnectedClients();
+  return ExpoMoquette.getConnectedClientsAsync();
 }
 
 export function restartServerAsync(): Promise<{ ok: Boolean }> {
