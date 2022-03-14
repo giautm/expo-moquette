@@ -1,12 +1,18 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { startServerAsync, getConnectedList, Client } from 'expo-mqtt-broker';
+import {
+  startServerAsync,
+  getConnectedList,
+  Client,
+  subscribeTopic,
+} from 'expo-mqtt-broker';
 import { useCallback } from 'react';
 
 export default function App() {
   const [port, setPort] = React.useState<string | undefined>();
   const [clientList, setClientList] = React.useState<Client[]>([]);
+  const [msg, setMsg] = React.useState('');
 
   React.useEffect(() => {
     startServerAsync({ host: '0.0.0.0', port: '1883', wssPort: '8080' }).then(
@@ -15,6 +21,13 @@ export default function App() {
         setPort(r?.port);
       }
     );
+    const subscription = subscribeTopic('test', (event) => {
+      console.log('Event from MQTT: ', event);
+      setMsg(event.result);
+    });
+    return () => {
+      subscription?.remove();
+    };
   }, []);
 
   const handleGetClient = useCallback(async () => {
@@ -34,6 +47,8 @@ export default function App() {
           <Text>{`${id} - ${address}:${_port}`}</Text>
         </View>
       ))}
+      <Text>Message from MQTT server</Text>
+      <Text>{msg}</Text>
     </View>
   );
 }

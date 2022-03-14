@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 export type Client = {
   address: string;
   port: number;
@@ -53,4 +53,8 @@ export function getServerStatusAsync(): Promise<ServerStatus> {
 
 export function isAvailable() {
   return Platform.OS === 'android';
+}
+const emitter = new NativeEventEmitter();
+export function subscribeTopic(topic: string, callback: (event: any) => void) {
+  return emitter.addListener(topic, callback);
 }
