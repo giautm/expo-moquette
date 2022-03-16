@@ -1,4 +1,5 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
+const ON_MESSAGE = 'ON_MESSAGE';
 export type Client = {
   address: string;
   port: number;
@@ -56,5 +57,9 @@ export function isAvailable() {
 }
 const emitter = new NativeEventEmitter();
 export function subscribeTopic(topic: string, callback: (event: any) => void) {
-  return emitter.addListener(topic, callback);
+  return emitter.addListener(ON_MESSAGE, (event: any) => {
+    if (event.topic === topic || event.topic.startsWith(topic)) {
+      callback(event);
+    }
+  });
 }

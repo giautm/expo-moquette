@@ -31,6 +31,7 @@ import static java.util.Arrays.asList;
 
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import java.util.Properties;
 @ReactModule(name = ExpoMoquetteModule.NAME)
 public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
   public static final String NAME = "ExpoMoquette";
+
 
   private Server server = null;
   private List<? extends InterceptHandler> userHandlers;
@@ -152,6 +154,8 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
    * This class is used to listen to messages on topics and manage them.
    */
   class PublisherListener extends AbstractInterceptHandler {
+    public static final String ON_MESSAGE = "ON_MESSAGE";
+
     private Server server;
     private ReactContext reactContext;
 
@@ -160,12 +164,12 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       this.reactContext = context;
     }
 
-    private void sendEvent(ReactContext reactContext,
-        String eventName,
-        @Nullable WritableMap params) {
+    private void sendEvent(
+      String eventName,
+      @Nullable WritableMap params) {
       reactContext
-          .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-          .emit(eventName, params);
+        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+        .emit(eventName, params);
     }
 
     @Override
@@ -175,10 +179,18 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       ByteBuf buffer = msg.getPayload();
       byte[] bytes = new byte[buffer.readableBytes()];
       buffer.readBytes(bytes);
-      String payload = new String(bytes);
-      WritableMap payloadMap = Arguments.createMap();
-      payloadMap.putString("result", payload);
-      sendEvent(reactContext, topic, payloadMap);
+      String payload = null;
+      try {
+        payload = new String(bytes, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+      if (!payload.isEmpty()) {
+        WritableMap payloadMap = Arguments.createMap();
+        payloadMap.putString("message", payload);
+        payloadMap.putString("topic", topic);
+        sendEvent(ON_MESSAGE, payloadMap);
+      }
     }
 
     @Override
