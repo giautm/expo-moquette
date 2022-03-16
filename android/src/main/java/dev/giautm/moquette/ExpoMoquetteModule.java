@@ -174,23 +174,22 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
 
     @Override
     public void onPublish(InterceptPublishMessage msg) {
-      String topic = msg.getTopicName();
-
-      ByteBuf buffer = msg.getPayload();
-      byte[] bytes = new byte[buffer.readableBytes()];
-      buffer.readBytes(bytes);
-      String payload = null;
       try {
-        payload = new String(bytes, "UTF-8");
+        String topic = msg.getTopicName();
+        ByteBuf buffer = msg.getPayload();
+        byte[] bytes = new byte[buffer.readableBytes()];
+        buffer.readBytes(bytes);
+        String payload = new String(bytes, "UTF-8");
+        if (!payload.isEmpty()) {
+          WritableMap payloadMap = Arguments.createMap();
+          payloadMap.putString("message", payload);
+          payloadMap.putString("topic", topic);
+          sendEvent(ON_MESSAGE, payloadMap);
+        }
       } catch (UnsupportedEncodingException e) {
         e.printStackTrace();
       }
-      if (!payload.isEmpty()) {
-        WritableMap payloadMap = Arguments.createMap();
-        payloadMap.putString("message", payload);
-        payloadMap.putString("topic", topic);
-        sendEvent(ON_MESSAGE, payloadMap);
-      }
+
     }
 
     @Override
