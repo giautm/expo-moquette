@@ -26,6 +26,8 @@ type ServerConfig = {
   host: string;
   port: string;
   wssPort: string;
+  password?: string;
+  username?: string;
 };
 export function startServerAsync(config: ServerConfig): Promise<string> {
   return ExpoMoquette.startServerAsync(config);

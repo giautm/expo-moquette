@@ -59,13 +59,14 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void startServerAsync(ReadableMap initialConfig, Promise promise, @Nullable String username,
-                               @Nullable String password) {
+  public void startServerAsync(ReadableMap initialConfig, Promise promise) {
     try {
 
       String host = initialConfig.getString("host");
       String port = initialConfig.getString("port");
       String wssPort = initialConfig.getString("wssPort");
+      String username = initialConfig.getString("username");
+      String password = initialConfig.getString("password");
 
       host = host.isEmpty() ? "0.0.0.0" : host;
       port = port.isEmpty() ? "1883" : port;
@@ -88,8 +89,6 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       } else {
         config.setProperty(BrokerConstants.ALLOW_ANONYMOUS_PROPERTY_NAME, "true");
       }
-
-
 
       server.startServer(config, userHandlers,null, authenticator,null);
 

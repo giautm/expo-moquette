@@ -15,12 +15,17 @@ export default function App() {
   const [msg, setMsg] = React.useState('');
 
   React.useEffect(() => {
-    startServerAsync({ host: '0.0.0.0', port: '1883', wssPort: '8080' }).then(
-      (r) => {
-        // @ts-ignore
-        setPort(r?.port);
-      }
-    );
+    startServerAsync({
+      host: '0.0.0.0',
+      port: '1883',
+      wssPort: '8080',
+      // password: '123456',
+      // username: 'abc',
+    }).then((r) => {
+      // @ts-ignore
+      setPort(r?.port);
+      console.log(r);
+    });
     const subscription = subscribeTopic('test', (event) => {
       console.log('Event from MQTT: ', event);
       setMsg(event.result);
