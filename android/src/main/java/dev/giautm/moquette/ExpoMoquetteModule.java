@@ -74,6 +74,7 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       config.setProperty(BrokerConstants.WEB_SOCKET_PORT_PROPERTY_NAME, wssPort);
       config.setProperty(BrokerConstants.HOST_PROPERTY_NAME, host);
       config.setProperty(BrokerConstants.PORT_PROPERTY_NAME, port);
+      config.setProperty(BrokerConstants.NETTY_MAX_BYTES_PROPERTY_NAME, String.valueOf(100 * 1024 - 100));
 
       userHandlers = asList(new PublisherListener(server, this.getReactApplicationContext()));
 
