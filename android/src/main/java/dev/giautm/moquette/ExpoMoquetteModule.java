@@ -42,6 +42,7 @@ import java.util.Properties;
 @ReactModule(name = ExpoMoquetteModule.NAME)
 public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
   public static final String NAME = "ExpoMoquette";
+  public static final int NETTY_MAX_BYTES = 100 * 1024 - 100;
 
 
   private Server server = null;
@@ -65,6 +66,8 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       String host = initialConfig.getString("host");
       String port = initialConfig.getString("port");
       String wssPort = initialConfig.getString("wssPort");
+      int maxBytes = Math.max(initialConfig.getInt("nettyMaxBytes"), NETTY_MAX_BYTES);
+
 
       host = host.isEmpty() ? "0.0.0.0" : host;
       port = port.isEmpty() ? "1883" : port;
@@ -74,7 +77,7 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       config.setProperty(BrokerConstants.WEB_SOCKET_PORT_PROPERTY_NAME, wssPort);
       config.setProperty(BrokerConstants.HOST_PROPERTY_NAME, host);
       config.setProperty(BrokerConstants.PORT_PROPERTY_NAME, port);
-      config.setProperty(BrokerConstants.NETTY_MAX_BYTES_PROPERTY_NAME, String.valueOf(100 * 1024 - 100));
+      config.setProperty(BrokerConstants.NETTY_MAX_BYTES_PROPERTY_NAME, String.valueOf(maxBytes));
 
       userHandlers = asList(new PublisherListener(server, this.getReactApplicationContext()));
 
