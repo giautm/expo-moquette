@@ -66,8 +66,9 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       String host = initialConfig.getString("host");
       String port = initialConfig.getString("port");
       String wssPort = initialConfig.getString("wssPort");
+      String username = initialConfig.getString("username");
+      String password = initialConfig.getString("password");
       int maxBytes = Math.max(initialConfig.getInt("nettyMaxBytes"), NETTY_MAX_BYTES);
-
 
       host = host.isEmpty() ? "0.0.0.0" : host;
       port = port.isEmpty() ? "1883" : port;
@@ -81,7 +82,18 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
 
       userHandlers = asList(new PublisherListener(server, this.getReactApplicationContext()));
 
-      server.startServer(config, userHandlers);
+      // Authentication
+      io.moquette.broker.security.IAuthenticator authenticator = null;
+      if (username != null && password != null && username.length() > 0 && password.length() > 0) {
+        config.setProperty(BrokerConstants.ALLOW_ANONYMOUS_PROPERTY_NAME, "false");
+        config.setProperty(BrokerConstants.AUTHENTICATOR_CLASS_NAME,
+          MqttEmbeddedBrokerUserAuthenticator.class.getName());
+        authenticator = new MqttEmbeddedBrokerUserAuthenticator(username, password.getBytes());
+      } else {
+        config.setProperty(BrokerConstants.ALLOW_ANONYMOUS_PROPERTY_NAME, "true");
+      }
+
+      server.startServer(config, userHandlers,null, authenticator,null);
 
       WritableMap result = Arguments.createMap();
       result.putString("port", String.valueOf(server.getPort()));

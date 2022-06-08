@@ -26,6 +26,8 @@ type ServerConfig = {
   host: string;
   port: string;
   wssPort: string;
+  password?: string;
+  username?: string;
   nettyMaxBytes?: number;
 };
 export function startServerAsync(config: ServerConfig): Promise<string> {
