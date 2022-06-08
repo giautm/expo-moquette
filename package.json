@@ -1,6 +1,6 @@
 {
   "name": "expo-mqtt-broker",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "MQTT Broker for Expo application",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

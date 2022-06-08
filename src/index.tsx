@@ -28,6 +28,7 @@ type ServerConfig = {
   wssPort: string;
   password?: string;
   username?: string;
+  nettyMaxBytes?: number;
 };
 export function startServerAsync(config: ServerConfig): Promise<string> {
   return ExpoMoquette.startServerAsync(config);
