@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 
 const LINKING_ERROR =
@@ -77,12 +77,26 @@ export function subscribeTopic(topic: string, callback: (event: any) => void) {
   });
 }
 
-export function useClientEvent(handler: (event: any) => void) {
-  const createEventHandler = (eventName: string) => {
-    return (event: any) => {
-      handler({ event, eventName });
-    };
+type EventData = {
+  eventName: 'ON_CONNECT' | 'ON_DISCONNECT' | 'ON_CONNECTION_LOST';
+  event: {
+    clientID: string;
+    totalClients: number;
+    username: string;
   };
+};
+
+export function useClientEvent(handler: (event: EventData) => void) {
+  const refHandler = useRef(handler);
+  refHandler.current = handler;
+  const createEventHandler = useCallback(
+    (eventName: EventData['eventName']) => {
+      return (event: any) => {
+        refHandler.current({ event, eventName });
+      };
+    },
+    []
+  );
   useEffect(() => {
     const subs = [
       emitter.addListener(ON_CONNECT, createEventHandler(ON_CONNECT)),
@@ -95,5 +109,5 @@ export function useClientEvent(handler: (event: any) => void) {
     return () => {
       subs.forEach((sub) => sub.remove());
     };
-  });
+  }, [createEventHandler]);
 }
