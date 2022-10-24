@@ -3,9 +3,7 @@ package dev.giautm.moquette;
 
 
 import java.util.Arrays;
-
 import javax.annotation.Nullable;
-
 import io.moquette.broker.security.IAuthenticator;
 
 
