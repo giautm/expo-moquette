@@ -15,7 +15,13 @@ import { startServerAsync } from "expo-moquette";
 
 // ...
 
-const result = await startServerAsync(3, 7);
+const result = await startServerAsync({
+  host: '0.0.0.0',
+  port: 1883,
+  wsPort: 8080,
+  username: 'admin',
+  password: 'admin',
+});
 ```
 
 ## Contributing
