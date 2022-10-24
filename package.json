@@ -1,6 +1,6 @@
 {
-  "name": "expo-mqtt-broker",
-  "version": "0.1.5",
+  "name": "expo-moquette",
+  "version": "0.1.0-alpha.0",
   "description": "MQTT Broker for Expo application",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -11,9 +11,7 @@
     "src",
     "lib",
     "android",
-    "ios",
     "cpp",
-    "expo-mqtt-broker.podspec",
     "!lib/typescript/example",
     "!android/build",
     "!ios/build",
@@ -36,13 +34,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/giautm/expo-mqtt-broker",
+  "repository": "https://github.com/giautm/expo-moquette",
   "author": "Giau. Tran Minh <hello@giautm.dev> (https://github.com/giautm)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/giautm/expo-mqtt-broker/issues"
+    "url": "https://github.com/giautm/expo-moquette/issues"
   },
-  "homepage": "https://github.com/giautm/expo-mqtt-broker#readme",
+  "homepage": "https://github.com/giautm/expo-moquette#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

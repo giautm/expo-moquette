@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "expo-mqtt-broker": ["./src/index"]
+      "expo-moquette": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

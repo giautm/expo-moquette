@@ -5,13 +5,13 @@ MQTT Broker for Expo application
 ## Installation
 
 ```sh
-npm install expo-mqtt-broker
+npm install expo-moquette
 ```
 
 ## Usage
 
 ```js
-import { startServerAsync } from "expo-mqtt-broker";
+import { startServerAsync } from "expo-moquette";
 
 // ...
 
