@@ -3,11 +3,10 @@ buildscript {
         repositories {
             google()
             mavenCentral()
-            jcenter()
         }
 
         dependencies {
-            classpath 'com.android.tools.build:gradle:3.5.3'
+            classpath 'com.android.tools.build:gradle:3.5.4'
         }
     }
 }
@@ -48,15 +47,19 @@ repositories {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url("$rootDir/../node_modules/react-native/android")
     }
+    maven {
+        // Add this repo to use snapshots
+        name 'moquette-snapshot'
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
     google()
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    // https://mvnrepository.com/artifact/io.moquette/moquette-broker
-    implementation 'io.moquette:moquette-broker:0.15'
+    // moquette-broker-0.16-20220603.085104-22.jar
+    implementation 'io.moquette:moquette-broker:0.16-SNAPSHOT'
 }

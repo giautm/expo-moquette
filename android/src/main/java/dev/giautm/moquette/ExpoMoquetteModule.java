@@ -1,7 +1,10 @@
 package dev.giautm.moquette;
 
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -15,11 +18,17 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Properties;
+
 import io.moquette.BrokerConstants;
 import io.moquette.broker.ClientDescriptor;
+import io.moquette.broker.Server;
 import io.moquette.broker.config.IConfig;
 import io.moquette.broker.config.MemoryConfig;
-import io.moquette.broker.Server;
 import io.moquette.broker.security.IAuthenticator;
 import io.moquette.interception.AbstractInterceptHandler;
 import io.moquette.interception.messages.InterceptConnectMessage;
@@ -28,12 +37,6 @@ import io.moquette.interception.messages.InterceptDisconnectMessage;
 import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.interception.messages.InterceptSubscribeMessage;
 import io.moquette.interception.messages.InterceptUnsubscribeMessage;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Properties;
 
 @ReactModule(name = ExpoMoquetteModule.NAME)
 public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
@@ -221,10 +224,11 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
     public void onUnsubscribe(InterceptUnsubscribeMessage msg) {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onPublish(InterceptPublishMessage msg) {
       try {
-        String payload = new String(msg.getPayload().array(), "UTF-8");
+        String payload = msg.getPayload().toString(StandardCharsets.UTF_8);
         if (!payload.isEmpty()) {
           WritableMap payloadMap = Arguments.createMap();
           payloadMap.putDouble("timestamp", (new Date()).getTime());
@@ -233,8 +237,6 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
           payloadMap.putString("topic", msg.getTopicName());
           sendEvent(ON_MESSAGE, payloadMap);
         }
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
       } finally {
         super.onPublish(msg);
       }
