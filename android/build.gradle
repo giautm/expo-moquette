@@ -47,9 +47,8 @@ repositories {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url("$rootDir/../node_modules/react-native/android")
     }
-    maven {
-        // Add this repo to use snapshots
-        name 'moquette-snapshot'
+    maven {  // Only for snapshot artifacts
+        name 'ossrh-snapshot'
         url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
     google()
