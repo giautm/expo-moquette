@@ -19,19 +19,19 @@ const ExpoMoquette = NativeModules.ExpoMoquette
     );
 
 export type Client = {
+  id: string;
   address: string;
   port: number;
-  id: string;
 };
 
-type ServerConfig = {
+export type ServerConfig = Partial<{
   host: string;
-  port: string;
-  wssPort: string;
-  password?: string;
-  username?: string;
-  nettyMaxBytes?: number;
-};
+  port: number;
+  wssPort: number;
+  password: string;
+  username: string;
+  nettyMaxBytes: number;
+}>;
 
 export type ServerStatus = {
   port: number;
@@ -42,15 +42,15 @@ export function startServerAsync(config: ServerConfig): Promise<string> {
   return ExpoMoquette.startServerAsync(config);
 }
 
-export function getConnectedList(): Promise<any> {
+export function getConnectedList(): Promise<Client[]> {
   return ExpoMoquette.getConnectedClientsAsync();
 }
 
-export function restartServerAsync(): Promise<{ ok: Boolean }> {
+export function restartServerAsync(): Promise<ServerStatus> {
   return ExpoMoquette.restartServerAsync();
 }
 
-export function stopServerAsync(): Promise<{ ok: Boolean }> {
+export function stopServerAsync(): Promise<ServerStatus> {
   return ExpoMoquette.stopServerAsync();
 }
 

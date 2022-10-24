@@ -22,7 +22,6 @@ import io.moquette.broker.config.MemoryConfig;
 import io.moquette.broker.Server;
 import io.moquette.broker.security.IAuthenticator;
 import io.moquette.interception.AbstractInterceptHandler;
-import io.moquette.interception.InterceptHandler;
 import io.moquette.interception.messages.InterceptConnectMessage;
 import io.moquette.interception.messages.InterceptConnectionLostMessage;
 import io.moquette.interception.messages.InterceptDisconnectMessage;
@@ -30,11 +29,11 @@ import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.interception.messages.InterceptSubscribeMessage;
 import io.moquette.interception.messages.InterceptUnsubscribeMessage;
 
-import static java.util.Arrays.asList;
-
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Properties;
 
 @ReactModule(name = ExpoMoquetteModule.NAME)
@@ -43,7 +42,6 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
   public static final int NETTY_MAX_BYTES = 100 * 1024 - 100;
 
   private Server mServer = null;
-  private List<? extends InterceptHandler> userHandlers;
 
   public ExpoMoquetteModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -59,26 +57,26 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void startServerAsync(ReadableMap initialConfig, Promise promise) {
     try {
-      String host = initialConfig.getString("host");
-      String port = initialConfig.getString("port");
-      String wssPort = initialConfig.getString("wssPort");
+      String host = initialConfig.hasKey("host")
+        ? initialConfig.getString("host")
+        : BrokerConstants.HOST;
+      int port = initialConfig.hasKey("port")
+        ? initialConfig.getInt("port")
+        : BrokerConstants.PORT;
+      int wssPort = initialConfig.hasKey("wssPort")
+        ? initialConfig.getInt("wssPort")
+        : BrokerConstants.WEBSOCKET_PORT;
       String username = initialConfig.getString("username");
       String password = initialConfig.getString("password");
       int maxBytes = initialConfig.hasKey("nettyMaxBytes")
         ? Math.max(initialConfig.getInt("nettyMaxBytes"), NETTY_MAX_BYTES)
         : NETTY_MAX_BYTES;
 
-      host = host.isEmpty() ? "0.0.0.0" : host;
-      port = port.isEmpty() ? "1883" : port;
-      wssPort = wssPort.isEmpty() ? "8080" : wssPort;
-
       final IConfig config = new MemoryConfig(new Properties());
-      config.setProperty(BrokerConstants.WEB_SOCKET_PORT_PROPERTY_NAME, wssPort);
       config.setProperty(BrokerConstants.HOST_PROPERTY_NAME, host);
-      config.setProperty(BrokerConstants.PORT_PROPERTY_NAME, port);
+      config.setProperty(BrokerConstants.PORT_PROPERTY_NAME, String.valueOf(port));
+      config.setProperty(BrokerConstants.WEB_SOCKET_PORT_PROPERTY_NAME, String.valueOf(wssPort));
       config.setProperty(BrokerConstants.NETTY_MAX_BYTES_PROPERTY_NAME, String.valueOf(maxBytes));
-
-      userHandlers = asList(new PublisherListener(mServer, this.getReactApplicationContext()));
 
       // Authentication
       IAuthenticator authenticator = null;
@@ -91,7 +89,10 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
         config.setProperty(BrokerConstants.ALLOW_ANONYMOUS_PROPERTY_NAME, "true");
       }
 
-      mServer.startServer(config, userHandlers, null, authenticator, null);
+      mServer.startServer(config, Collections.singletonList(
+        new PublisherListener(mServer, this.getReactApplicationContext())),
+        null, authenticator, null
+      );
       promise.resolve(this.serverInfo());
     } catch (Exception e) {
       promise.reject("ERR_MOQUETTE", e);
@@ -149,8 +150,8 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
 
   private ReadableMap serverInfo() {
     WritableMap result = Arguments.createMap();
-    result.putString("port", String.valueOf(mServer.getPort()));
-    result.putString("sslPort", String.valueOf(mServer.getSslPort()));
+    result.putInt("port", mServer.getPort());
+    result.putInt("sslPort", mServer.getSslPort());
     return result;
   }
 
@@ -163,20 +164,18 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
     public static final String ON_DISCONNECT = "ON_DISCONNECT";
     public static final String ON_CONNECTION_LOST = "ON_CONNECTION_LOST";
 
-    private Server server;
-    private ReactContext reactContext;
+    private final Server mServer;
+    private final ReactContext mReactContext;
     private int mClientCount = 0;
 
-    PublisherListener(Server server, ReactContext context) {
-      this.server = server;
-      this.reactContext = context;
+    PublisherListener(Server mServer, ReactContext context) {
       this.mClientCount = 0;
+      this.mReactContext = context;
+      this.mServer = mServer;
     }
 
-    private void sendEvent(
-      String eventName,
-      @Nullable WritableMap params) {
-      reactContext
+    private void sendEvent(String eventName, @Nullable WritableMap params) {
+      mReactContext
         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
         .emit(eventName, params);
     }
@@ -226,12 +225,13 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
     @Override
     public void onPublish(InterceptPublishMessage msg) {
       try {
-        String topic = msg.getTopicName();
         String payload = new String(msg.getPayload().array(), "UTF-8");
         if (!payload.isEmpty()) {
           WritableMap payloadMap = Arguments.createMap();
+          payloadMap.putDouble("timestamp", (new Date()).getTime());
+          payloadMap.putString("clientID", msg.getClientID());
           payloadMap.putString("message", payload);
-          payloadMap.putString("topic", topic);
+          payloadMap.putString("topic", msg.getTopicName());
           sendEvent(ON_MESSAGE, payloadMap);
         }
       } catch (UnsupportedEncodingException e) {
