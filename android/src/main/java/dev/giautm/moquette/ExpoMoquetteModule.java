@@ -64,7 +64,9 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
       String wssPort = initialConfig.getString("wssPort");
       String username = initialConfig.getString("username");
       String password = initialConfig.getString("password");
-      int maxBytes = Math.max(initialConfig.getInt("nettyMaxBytes"), NETTY_MAX_BYTES);
+      int maxBytes = initialConfig.hasKey("nettyMaxBytes")
+        ? Math.max(initialConfig.getInt("nettyMaxBytes"), NETTY_MAX_BYTES)
+        : NETTY_MAX_BYTES;
 
       host = host.isEmpty() ? "0.0.0.0" : host;
       port = port.isEmpty() ? "1883" : port;
