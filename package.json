@@ -1,6 +1,6 @@
 {
   "name": "expo-moquette",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "MQTT Broker for Expo application",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
