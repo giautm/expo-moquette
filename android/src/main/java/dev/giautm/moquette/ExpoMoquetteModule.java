@@ -198,22 +198,22 @@ public class ExpoMoquetteModule extends ReactContextBaseJavaModule {
     }
 
     @Override
-    public void onDisconnect(InterceptDisconnectMessage msg) {
+    public void onConnectionLost(InterceptConnectionLostMessage msg) {
       mClientCount--;
       WritableMap payloadMap = Arguments.createMap();
       payloadMap.putString("clientID", msg.getClientID());
       payloadMap.putString("username", msg.getUsername());
       payloadMap.putInt("totalClients", mClientCount);
-      sendEvent(ON_DISCONNECT, payloadMap);
+      sendEvent(ON_CONNECTION_LOST, payloadMap);
     }
 
     @Override
-    public void onConnectionLost(InterceptConnectionLostMessage msg) {
+    public void onDisconnect(InterceptDisconnectMessage msg) {
       WritableMap payloadMap = Arguments.createMap();
       payloadMap.putString("clientID", msg.getClientID());
       payloadMap.putString("username", msg.getUsername());
       payloadMap.putInt("totalClients", mClientCount);
-      sendEvent(ON_CONNECTION_LOST, payloadMap);
+      sendEvent(ON_DISCONNECT, payloadMap);
     }
 
     @Override
