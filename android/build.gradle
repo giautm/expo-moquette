@@ -60,5 +60,5 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     // moquette-broker-0.16-20220603.085104-22.jar
-    implementation 'io.moquette:moquette-broker:0.16-SNAPSHOT'
+    implementation 'io.moquette:moquette-broker:0.16'
 }
